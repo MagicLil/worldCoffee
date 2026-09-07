@@ -20,6 +20,7 @@
 
     <modules>
         <module>wc-common</module>
+        <module>wc-launcher</module>
         <module>wc-gateway</module>
         <module>wc-user</module>
         <module>wc-shop</module>

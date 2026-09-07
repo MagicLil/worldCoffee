@@ -24,7 +24,8 @@ $containers = @(
   @{ Name = 'rabbitmq'; Port = 5672 },
   @{ Name = 'nacos'; Port = 8848 },
   @{ Name = 'es'; Port = 9200 },
-  @{ Name = 'worldcoffee-minio'; Port = 9000 }
+  @{ Name = 'worldcoffee-minio'; Port = 9000 },
+  @{ Name = 'chroma'; Port = 8000 }
 )
 
 $gatewayRoutes = @(

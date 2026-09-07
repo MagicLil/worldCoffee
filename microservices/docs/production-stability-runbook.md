@@ -32,6 +32,32 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-all.ps1 -For
 5. 启动用户端前端和管理后台前端。
 6. 执行健康检查、Nacos 注册检查、网关路由自检。
 
+## 1.1 IntelliJ 一键启动后端
+
+项目新增了统一启动类：
+
+```text
+wc-launcher/src/main/java/cn/lx/worldcoffee/launcher/WorldCoffeeStartupApplication.java
+```
+
+在 IntelliJ 中用 **Java 21** 运行这个类即可。它会：
+
+1. 复用已经存在的 Docker 容器；缺少的容器才交给 Compose 创建。
+2. 如果服务启动包不存在，自动执行 `mvn -DskipTests package`。
+3. 按用户、商城、社区、消息、AI、管理端、网关的顺序启动后端。
+4. 等待基础设施和服务端口就绪，并把服务日志写入 `.run/launcher-logs`。
+
+启动器只负责后端和 Docker，不启动两个前端。停止 IntelliJ 中的启动器时，只会停止本次启动的 Java 服务，Docker 容器会继续运行。
+
+可选参数：
+
+```text
+--plan        只打印启动计划，不执行命令
+--skip-build  不执行 Maven，要求各服务 target 下已有启动包
+--skip-sql    不执行幂等数据库初始化脚本
+--root PATH   指定 microservices 目录
+```
+
 脚本输出是英文，这是为了兼容 Windows PowerShell 5 的脚本编码；本文档保持中文。
 
 ## 2. 常用入口

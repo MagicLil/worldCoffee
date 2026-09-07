@@ -16,8 +16,68 @@ $pidRoot = Join-Path $runRoot 'pids'
 
 New-Item -ItemType Directory -Force -Path $logRoot, $pidRoot | Out-Null
 
-function Test-CommandExists($name) {
-  return [bool](Get-Command $name -ErrorAction SilentlyContinue)
+function Get-JavaMajorVersion($javaPath) {
+  if ($env:OS -eq 'Windows_NT') {
+    $versionText = (& cmd.exe /c "`"$javaPath`" -version 2>&1" | Out-String)
+  } else {
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'SilentlyContinue'
+    try {
+      $versionText = (& $javaPath -version 2>&1 | Out-String)
+    } finally {
+      $ErrorActionPreference = $previousErrorActionPreference
+    }
+  }
+  if ($versionText -match 'version\s+"(\d+)') {
+    return [int]$Matches[1]
+  }
+  return 0
+}
+
+function Resolve-Java21 {
+  $candidates = New-Object System.Collections.Generic.List[string]
+
+  if ($env:JAVA_HOME) {
+    $candidates.Add((Join-Path $env:JAVA_HOME 'bin\java.exe'))
+  }
+
+  $pathJava = Get-Command java -ErrorAction SilentlyContinue
+  if ($pathJava) {
+    $candidates.Add($pathJava.Source)
+
+    $javaBin = Split-Path -Parent $pathJava.Source
+    $javaRoot = Split-Path -Parent $javaBin
+    $toolRoot = Split-Path -Parent $javaRoot
+    if (Test-Path $toolRoot) {
+      Get-ChildItem $toolRoot -Directory -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -match '^(java|jdk).*(21|22|23|24|25)' } |
+        ForEach-Object { $candidates.Add((Join-Path $_.FullName 'bin\java.exe')) }
+    }
+  }
+
+  foreach ($candidate in $candidates | Select-Object -Unique) {
+    if ((Test-Path $candidate) -and ((Get-JavaMajorVersion $candidate) -ge 21)) {
+      return $candidate
+    }
+  }
+
+  throw 'Java 21 or newer was not found. Set JAVA_HOME to a JDK 21 installation before starting the services.'
+}
+
+function Resolve-MavenCommand {
+  $maven = Get-Command mvn.cmd -ErrorAction SilentlyContinue
+  if (-not $maven) { $maven = Get-Command mvn -ErrorAction SilentlyContinue }
+  if ($maven) { return $maven.Source }
+
+  $wrapper = Join-Path $microRoot 'mvnw.cmd'
+  if (Test-Path $wrapper) { return $wrapper }
+
+  if ($env:MAVEN_HOME) {
+    $configuredMaven = Join-Path $env:MAVEN_HOME 'bin\mvn.cmd'
+    if (Test-Path $configuredMaven) { return $configuredMaven }
+  }
+
+  throw 'Maven was not found. Install Maven, add it to PATH, or provide mvnw.cmd.'
 }
 
 function Test-PortOpen([int]$port) {
@@ -72,7 +132,7 @@ function Start-JavaService($name, [int]$port, $jarRelative) {
   $out = Join-Path $logRoot "$name.out.log"
   $err = Join-Path $logRoot "$name.err.log"
   Write-Host "Starting $name -> port $port"
-  $proc = Start-Process -FilePath 'java' `
+  $proc = Start-Process -FilePath $javaCommand `
     -ArgumentList @("-DLOG_DIR=$logRoot", '-jar', $jar) `
     -WorkingDirectory $microRoot `
     -RedirectStandardOutput $out `
@@ -118,8 +178,14 @@ function Invoke-SqlFile($file) {
   cmd /c $cmd
 }
 
-if (-not (Test-CommandExists java)) { throw 'java command not found. Install Java 21 and add it to PATH.' }
-if (-not (Test-CommandExists mvn)) { throw 'mvn command not found. Install Maven and add it to PATH.' }
+$javaCommand = Resolve-Java21
+$javaHomeForStartup = Split-Path -Parent (Split-Path -Parent $javaCommand)
+$env:JAVA_HOME = $javaHomeForStartup
+$env:Path = "$javaHomeForStartup\bin;$env:Path"
+$mavenCommand = $null
+if (-not $SkipBuild) {
+  $mavenCommand = Resolve-MavenCommand
+}
 
 if (-not $SkipInfra) {
   & (Join-Path $PSScriptRoot 'start-infra.ps1') -Wait
@@ -129,7 +195,10 @@ if (-not $SkipBuild) {
   Push-Location $microRoot
   try {
     Write-Host 'Packaging backend: mvn -DskipTests package'
-    mvn -DskipTests package
+    & $mavenCommand -DskipTests package
+    if ($LASTEXITCODE -ne 0) {
+      throw "Maven package failed with exit code $LASTEXITCODE."
+    }
   } finally {
     Pop-Location
   }
