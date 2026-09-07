@@ -32,13 +32,13 @@ WorldCoffee 把"咖啡社区"和"咖啡电商"合在一起，并接入大模型�
 
 | 层 | 技术 |
 |----|------|
-| 单体后端 `backend/` | Spring Boot **3.4.1** · Java **21** · MyBatis-Plus · Spring Security · JWT · Spring AI 1.1.2 |
+| 单体后端 `backend/`（遗留） | Spring Boot **3.4.1** · Java **21** · MyBatis-Plus · Spring Security · JWT · Spring AI 1.1.2 |
 | 微服务 `microservices/` | Spring Boot **3.2.5** · Java **21** · Spring Cloud Alibaba（Nacos）· Spring AI 1.0.0 |
 | 用户前端 `frontend/` | Vue 3 · Vite 5 · Tailwind · Axios |
 | 管理前端 `admin-frontend/` | Vue 3 · Vite · Element Plus · Axios |
 | 基础设施 | MySQL 8 · Redis · RabbitMQ · Elasticsearch 8 · Nacos · MinIO · Chroma（AI 向量库） |
 
-> 单体后端与微服务是**两套可选的部署方式**，按需选用，不要在同一台机器上同时占用相同端口。
+> `microservices/` 是当前默认开发与部署路径。`backend/` 已标记为旧单体后端，仅用于接口对照、迁移兜底或回退；不要在同一台机器上与微服务网关同时启动，因为两者都会占用 `8080`。
 
 ---
 
@@ -46,7 +46,7 @@ WorldCoffee 把"咖啡社区"和"咖啡电商"合在一起，并接入大模型�
 
 ```
 worldCoffee/
-├── backend/                # 单体后端（用户/社区/商城/通知/私信/AI）
+├── backend/                # 旧单体后端（Legacy Monolith，仅保留作对照与回退）
 │   ├── worldcoffee-common  # 公共库：JWT、统一返回、全局异常、API 文档
 │   └── worldcoffee-admin   # 业务入口 WorldCoffeeApplication
 ├── microservices/          # 微服务（Spring Cloud Alibaba + Nacos）
@@ -106,7 +106,7 @@ export MINIO_SECRET_KEY=你的MinIO密码
 > 数据库、Redis、RabbitMQ、Nacos、Elasticsearch 的连接信息在 `application.yml` 中配置，
 > 请改成你自己的**强密码**，不要使用仓库里示例中的弱口令。
 
-### 3. 启动单体后端（可选方案 A）
+### 3. 启动单体后端（仅用于回退或接口对照）
 
 ```bash
 cd backend
@@ -115,7 +115,7 @@ cd backend
 # 或：java -jar worldcoffee-admin/target/*.jar
 ```
 
-### 4. 启动微服务（可选方案 B）
+### 4. 启动微服务（默认方案）
 
 ```bash
 cd microservices
