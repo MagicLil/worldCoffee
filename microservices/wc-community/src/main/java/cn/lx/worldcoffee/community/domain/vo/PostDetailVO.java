@@ -33,4 +33,17 @@ public class PostDetailVO {
     private Boolean favoritedByMe;
     private LocalDateTime createTime;
     private List<CommentVO> comments;
+
+    /**
+     * Canonical nested author shape used by the current PC and mobile clients.
+     * Flat fields above are retained for existing callers.
+     */
+    public PostAuthorVO getAuthor() {
+        return PostAuthorVO.builder()
+                .id(userId)
+                .username(username)
+                .nickname(username)
+                .avatar(avatar)
+                .build();
+    }
 }

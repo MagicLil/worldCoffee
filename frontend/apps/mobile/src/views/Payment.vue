@@ -143,7 +143,7 @@
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
               <span class="text-ink-muted">商品总额</span>
-              <span class="text-ink">¥{{ formatPrice(order.totalAmount) }}</span>
+              <span class="text-ink">¥{{ formatPrice(originalAmount) }}</span>
             </div>
             <div v-if="order.discountAmount > 0" class="flex justify-between text-emerald-600">
               <span>优惠券减免</span>
@@ -226,10 +226,18 @@ let countdownTimer = null
 // ─── 计算属性 ──────────────────────────────
 const actualAmount = computed(() => {
   if (!order.value) return 0
-  const total = Number(order.value.totalAmount) || 0
+  const total = Number(order.value.payAmount ?? order.value.totalAmount) || 0
+  return total > 0 ? total : 0
+})
+
+const originalAmount = computed(() => {
+  if (!order.value) return 0
+  if (order.value.originalAmount != null) {
+    return Number(order.value.originalAmount) || 0
+  }
+  const total = Number(order.value.payAmount ?? order.value.totalAmount) || 0
   const discount = Number(order.value.discountAmount) || 0
-  const result = total - discount
-  return result > 0 ? result : 0
+  return total + discount
 })
 
 const countdownPercent = computed(() => {

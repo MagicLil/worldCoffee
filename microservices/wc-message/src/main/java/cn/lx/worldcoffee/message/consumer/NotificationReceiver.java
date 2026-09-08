@@ -24,10 +24,15 @@ public class NotificationReceiver {
     @RabbitListener(queues = "chat.queue.default")
     public void handleChatMessage(String message) {
         // 消息格式: "fromId|||toId|||content"
-        String[] parts = message.split("\\|\\|\\|");
-        if (parts.length >= 3) {
-            String toId = parts[1];
-            sseEmitterManager.sendNotification(toId, "new_message");
+        String[] parts = message.split("\\|\\|\\|", 3);
+        if (parts.length == 3) {
+            try {
+                Long fromId = Long.valueOf(parts[0]);
+                String toId = parts[1];
+                sseEmitterManager.sendChatMessage(toId, fromId, parts[2]);
+            } catch (NumberFormatException ignored) {
+                // Ignore malformed legacy messages instead of terminating the listener.
+            }
         }
     }
 }

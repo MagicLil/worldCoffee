@@ -31,4 +31,17 @@ public class PostListVO {
     private Boolean likedByMe;
     private Boolean favoritedByMe;
     private LocalDateTime createTime;
+
+    /**
+     * Canonical nested author shape used by the current PC and mobile feeds.
+     * Flat fields above are retained for existing callers.
+     */
+    public PostAuthorVO getAuthor() {
+        return PostAuthorVO.builder()
+                .id(userId)
+                .username(username)
+                .nickname(username)
+                .avatar(avatar)
+                .build();
+    }
 }

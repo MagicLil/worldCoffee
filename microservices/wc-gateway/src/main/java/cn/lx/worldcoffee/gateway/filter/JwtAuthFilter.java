@@ -18,32 +18,12 @@ import reactor.core.publisher.Mono;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class JwtAuthFilter implements GlobalFilter, Ordered {
 
     private final SecretKey key;
     private final ReactiveStringRedisTemplate redisTemplate;
-
-    private static final List<String> WHITE_LIST = Arrays.asList(
-            "/api/shop/products",
-            "/api/shop/categories",
-            "/api/shop/seckill",
-            "/api/user/login",
-            "/api/user/register",
-            "/api/users/login",
-            "/api/users/register",
-            "/api/admin/login",
-            "/uploads/",
-            "/actuator/"
-    );
-
-    private static final List<String> OPTIONAL_AUTH_LIST = Arrays.asList(
-            "/api/coffee/posts/recommend",
-            "/api/coffee/feed-events"
-    );
 
     public JwtAuthFilter(ReactiveStringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -56,16 +36,15 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
+        HttpMethod method = exchange.getRequest().getMethod();
         String path = exchange.getRequest().getURI().getPath();
 
-        if (OPTIONAL_AUTH_LIST.contains(path)) {
+        if (isOptionalAuthRequest(method, path)) {
             return filterOptionalAuth(exchange, chain);
         }
 
-        for (String white : WHITE_LIST) {
-            if (path.startsWith(white)) {
-                return chain.filter(exchange);
-            }
+        if (isWhiteListRequest(method, path)) {
+            return chain.filter(exchange);
         }
 
         String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
@@ -75,6 +54,70 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
         String token = authHeader.substring(7);
         return filterRequiredAuth(exchange, chain, token);
+    }
+
+    /**
+     * Public community reads may carry a token, but do not require one.
+     * Keeping the optional-auth boundary method-specific prevents writes and
+     * user-owned feeds from becoming public accidentally.
+     */
+    private boolean isOptionalAuthRequest(HttpMethod method, String path) {
+        if (HttpMethod.POST.equals(method) && "/api/coffee/feed-events".equals(path)) {
+            return true;
+        }
+        if (!HttpMethod.GET.equals(method)) {
+            return false;
+        }
+        if (path.equals("/api/coffee/posts")
+                || path.equals("/api/coffee/posts/recommend")
+                || path.equals("/api/coffee/posts/hot")
+                || path.equals("/api/coffee/posts/topic")
+                || path.equals("/api/coffee/topics")
+                || path.equals("/api/coffee/search")
+                || path.equals("/api/coffee/search/unified")) {
+            return true;
+        }
+
+        String postPrefix = "/api/coffee/posts/";
+        if (!path.startsWith(postPrefix)) {
+            return false;
+        }
+        String postId = path.substring(postPrefix.length());
+        return postId.matches("\\d+");
+    }
+
+    /**
+     * Public endpoints are explicitly method-scoped. The previous prefix
+     * matching made write endpoints under /api/shop/products and
+     * /api/shop/categories unintentionally anonymous.
+     */
+    private boolean isWhiteListRequest(HttpMethod method, String path) {
+        if (path.startsWith("/uploads/") || path.startsWith("/actuator/")) {
+            return true;
+        }
+        if (HttpMethod.POST.equals(method)) {
+            return path.equals("/api/user/login")
+                    || path.equals("/api/user/register")
+                    || path.equals("/api/users/login")
+                    || path.equals("/api/users/register")
+                    || path.equals("/api/admin/login");
+        }
+        if (!HttpMethod.GET.equals(method)) {
+            return false;
+        }
+        if (path.equals("/api/shop/products")
+                || path.equals("/api/shop/products/search")
+                || path.equals("/api/shop/categories")
+                || path.equals("/api/shop/seckill/activities")) {
+            return true;
+        }
+
+        String productPrefix = "/api/shop/products/";
+        if (!path.startsWith(productPrefix)) {
+            return false;
+        }
+        String productId = path.substring(productPrefix.length());
+        return productId.matches("\\d+");
     }
 
     private Mono<Void> filterOptionalAuth(ServerWebExchange exchange, GatewayFilterChain chain) {
