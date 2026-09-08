@@ -1,0 +1,21 @@
+<!--login.wxml —— 登录页-->
+<view class="login-page">
+
+  <view class="brand">
+    <text class="brand-icon">☕</text>
+    <text class="brand-name">WorldCoffee</text>
+    <text class="brand-slogan">一杯咖啡，一个社区</text>
+  </view>
+
+  <view class="wc-card form">
+    <input class="wc-input" placeholder="用户名" value="{{username}}"
+           bindinput="onUsernameInput" placeholder-class="ph" />
+    <input class="wc-input" placeholder="密码" value="{{password}}" password="{{true}}"
+           bindinput="onPasswordInput" placeholder-class="ph" />
+    <button class="wc-btn" loading="{{submitting}}" bindtap="handleSubmit">登 录</button>
+    <view class="tip">
+      <text class="wc-muted">与网页端共用同一账号体系</text>
+    </view>
+  </view>
+
+</view>

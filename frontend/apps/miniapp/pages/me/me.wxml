@@ -1,0 +1,41 @@
+<!--me.wxml —— 我的-->
+<view class="me-page">
+
+  <!-- 已登录 -->
+  <block wx:if="{{loggedIn && user}}">
+    <view class="wc-card profile">
+      <view class="avatar-wrap">
+        <text class="avatar-text">{{user.username[0]}}</text>
+      </view>
+      <view class="profile-meta">
+        <text class="username">{{user.username}}</text>
+        <text class="wc-muted">ID: {{user.userId}}</text>
+      </view>
+    </view>
+
+    <view class="wc-card">
+      <view class="row">
+        <text>登录方式</text>
+        <text class="wc-muted">账号密码（与网页端共用）</text>
+      </view>
+      <view class="row">
+        <text>认证体系</text>
+        <text class="wc-muted">JWT · 网关统一鉴权</text>
+      </view>
+    </view>
+
+    <view class="actions">
+      <button class="wc-btn-outline" bindtap="handleLogout">退出登录</button>
+    </view>
+  </block>
+
+  <!-- 未登录 -->
+  <block wx:else>
+    <view class="wc-card profile logged-out">
+      <text class="brand-icon">☕</text>
+      <text class="empty-text">登录后体验完整功能</text>
+      <button class="wc-btn login-btn" bindtap="goLogin">去登录</button>
+    </view>
+  </block>
+
+</view>

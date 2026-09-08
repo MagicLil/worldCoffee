@@ -1,0 +1,55 @@
+/**app.wxss —— 全局样式（咖啡色调，与 web 端设计语言对齐）**/
+page {
+  background: #FFF8F1;
+  color: #3E2723;
+  font-size: 28rpx;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* 通用卡片 */
+.wc-card {
+  background: #ffffff;
+  border-radius: 24rpx;
+  margin: 20rpx 24rpx;
+  padding: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(62, 39, 35, 0.06);
+}
+
+/* 主按钮 */
+.wc-btn {
+  background: #3E2723;
+  color: #ffffff;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+}
+.wc-btn[disabled] {
+  background: #D7CCC8;
+  color: #ffffff;
+}
+
+.wc-btn-outline {
+  background: #ffffff;
+  color: #3E2723;
+  border: 2rpx solid #3E2723;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+}
+
+/* 输入框 */
+.wc-input {
+  background: #F5F0EB;
+  border-radius: 16rpx;
+  height: 88rpx;
+  padding: 0 24rpx;
+  margin-bottom: 24rpx;
+  font-size: 28rpx;
+}
+
+.wc-muted {
+  color: #8D6E63;
+  font-size: 24rpx;
+}

@@ -8,5 +8,4 @@ dist-ssr
 *.log
 .npm
 .yarn
-pnpm-lock.yaml
 .cache

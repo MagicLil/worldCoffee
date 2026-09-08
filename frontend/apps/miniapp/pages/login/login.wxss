@@ -1,0 +1,42 @@
+/* login.wxss —— 登录页 */
+.login-page {
+  padding: 120rpx 40rpx 60rpx;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 80rpx;
+}
+
+.brand-icon {
+  font-size: 120rpx;
+}
+
+.brand-name {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #3E2723;
+  margin-top: 16rpx;
+  letter-spacing: 4rpx;
+}
+
+.brand-slogan {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #8D6E63;
+}
+
+.form {
+  padding: 40rpx 32rpx;
+}
+
+.ph {
+  color: #A1887F;
+}
+
+.tip {
+  text-align: center;
+  margin-top: 24rpx;
+}

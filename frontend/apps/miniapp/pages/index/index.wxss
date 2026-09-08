@@ -1,0 +1,115 @@
+/* index.wxss —— 首页帖子流 */
+.page {
+  padding-bottom: 40rpx;
+}
+
+.post-author {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: #D7CCC8;
+  flex-shrink: 0;
+}
+
+.author-meta {
+  margin-left: 16rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.author-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #3E2723;
+}
+
+.author-time {
+  font-size: 22rpx;
+  color: #8D6E63;
+}
+
+.post-cover {
+  width: 100%;
+  height: 360rpx;
+  border-radius: 16rpx;
+  background: #F5F0EB;
+}
+
+.post-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #3E2723;
+  margin-top: 16rpx;
+}
+
+.post-content {
+  font-size: 26rpx;
+  color: #6D4C41;
+  margin-top: 8rpx;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.post-images {
+  display: flex;
+  gap: 8rpx;
+  margin-top: 12rpx;
+}
+
+.post-img {
+  flex: 1;
+  height: 180rpx;
+  border-radius: 12rpx;
+  background: #F5F0EB;
+}
+
+.post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #F5F0EB;
+}
+
+.like {
+  font-size: 26rpx;
+  color: #E88B8B;
+}
+
+.hint {
+  font-size: 22rpx;
+  color: #A1887F;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 160rpx 0;
+}
+
+.empty-icon {
+  font-size: 88rpx;
+}
+
+.empty-text {
+  margin-top: 24rpx;
+  color: #8D6E63;
+  font-size: 26rpx;
+}
+
+.loading {
+  text-align: center;
+  color: #A1887F;
+  font-size: 24rpx;
+  padding: 32rpx 0;
+}

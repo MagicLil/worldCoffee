@@ -1,0 +1,48 @@
+<!--index.wxml —— 首页推荐帖子流-->
+<view class="page">
+
+  <!-- 帖子列表 -->
+  <view wx:for="{{posts}}" wx:key="id" class="wc-card post" data-id="{{item.id}}">
+    <!-- 作者行 -->
+    <view class="post-author">
+      <image class="avatar" src="{{item.authorAvatar}}" mode="aspectFill" binderror="onAvatarError" />
+      <view class="author-meta">
+        <text class="author-name">{{item.authorName}}</text>
+        <text class="author-time">{{item.createTime}}</text>
+      </view>
+    </view>
+
+    <!-- 封面图 -->
+    <image wx:if="{{item.cover}}" class="post-cover" src="{{item.cover}}" mode="aspectFill" lazy-load="{{true}}" />
+
+    <!-- 文字内容 -->
+    <view class="post-title">{{item.title}}</view>
+    <view wx:if="{{item.content}}" class="post-content">{{item.content}}</view>
+
+    <!-- 图片组（无封面时展示前 3 张） -->
+    <view wx:if="{{!item.cover && item.images.length > 0}}" class="post-images">
+      <image wx:for="{{item.images}}" wx:for-item="img" wx:key="*this" class="post-img" src="{{img}}" mode="aspectFill" lazy-load="{{true}}" />
+    </view>
+
+    <!-- 互动栏 -->
+    <view class="post-footer">
+      <text class="like">♥ {{item.likeCount}}</text>
+      <text class="hint">进入小程序查看更多</text>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <view wx:if="{{!loading && posts.length === 0}}" class="empty">
+    <text class="empty-icon">☕</text>
+    <text class="empty-text">还没有帖子，下拉刷新试试</text>
+  </view>
+
+  <!-- 加载态 -->
+  <view wx:if="{{loading}}" class="loading">
+    <text>咖啡冲泡中…</text>
+  </view>
+  <view wx:if="{{!loading && posts.length > 0 && !hasMore}}" class="loading">
+    <text>— 到底啦 —</text>
+  </view>
+
+</view>

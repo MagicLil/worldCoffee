@@ -1,0 +1,32 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/me/me",
+    "pages/login/login"
+  ],
+  "window": {
+    "navigationBarTitleText": "WorldCoffee",
+    "navigationBarBackgroundColor": "#3E2723",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#FFF8F1",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#8D6E63",
+    "selectedColor": "#3E2723",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
