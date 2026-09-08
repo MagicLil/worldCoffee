@@ -1,4 +1,4 @@
-﻿import axios from 'axios'
+import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import router from '../router'
 
@@ -9,9 +9,9 @@ const request = axios.create({
 
 request.interceptors.request.use(config => {
   const token = sessionStorage.getItem('admin_token')
-  config.headers = config.headers || {}
   if (token) {
-    config.headers.Authorization = 'Bearer ' + token
+    // axios v1 中拦截器的 headers 恒为 AxiosHeaders 实例，断言安全
+    ;(config.headers as any).Authorization = 'Bearer ' + token
   }
   return config
 })
@@ -38,4 +38,17 @@ request.interceptors.response.use(
   }
 )
 
-export default request
+/**
+ * 响应拦截器在运行时已把 Result 解包为业务 data，
+ * 这里把导出类型对齐为 Promise<any>（与运行时行为一致），
+ * 视图层可直接 `const data = await request.get(...)`
+ */
+type UnwrappedHttp = {
+  get: (url: string, config?: any) => Promise<any>
+  post: (url: string, data?: any, config?: any) => Promise<any>
+  put: (url: string, data?: any, config?: any) => Promise<any>
+  delete: (url: string, config?: any) => Promise<any>
+}
+
+export default request as unknown as UnwrappedHttp
+

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '../utils/request'
@@ -47,7 +47,7 @@ const filterStatus = ref('')
 async function loadProducts() {
   loading.value = true
   try {
-    const params = { page: page.value, size: pageSize }
+    const params: any = { page: page.value, size: pageSize }
     if (filterCategoryId.value) params.categoryId = filterCategoryId.value
     if (filterStatus.value !== '' && filterStatus.value !== '') params.status = filterStatus.value
     products.value = await request.get('/api/admin/products', { params })
@@ -65,7 +65,7 @@ function search() {
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增商品')
 const editingProductId = ref(null)
-const form = ref({})
+const form = ref<any>({})
 
 function openCreateDialog() {
   dialogTitle.value = '新增商品'

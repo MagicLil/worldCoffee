@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '../utils/request'
@@ -16,7 +16,7 @@ const typeMap = {
 async function loadCoupons() {
   loading.value = true
   try {
-    const params = {}
+    const params: any = {}
     if (filterType.value !== '') params.type = filterType.value
     coupons.value = await request.get('/api/admin/marketing/coupons', { params })
   } finally {
@@ -37,7 +37,7 @@ function formatTime(t) {
 const dialogVisible = ref(false)
 const dialogTitle = ref('新增优惠券')
 const editingId = ref(null)
-const form = ref({})
+const form = ref<any>({})
 
 function openCreateDialog() {
   dialogTitle.value = '新增优惠券'

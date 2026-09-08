@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '../utils/request'
@@ -33,7 +33,7 @@ const statusMap = {
 async function loadOrders() {
   loading.value = true
   try {
-    const params = { page: page.value, size: pageSize }
+    const params: any = { page: page.value, size: pageSize }
     if (filterStatus.value !== '') params.status = filterStatus.value
     if (filterUserId.value) params.userId = filterUserId.value
     if (filterOrderNo.value.trim()) params.orderNo = filterOrderNo.value.trim()

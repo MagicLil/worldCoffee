@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
+import tailwindcss from 'tailwindcss'
+import autoprefixer from 'autoprefixer'
 
 export default defineConfig({
   plugins: [vue()],
@@ -27,5 +29,11 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['@wc/shared']
+  },
+  css: {
+    // PostCSS 配置内联（原 postcss.config.js 已移除，构建链全 TS）
+    postcss: {
+      plugins: [tailwindcss(), autoprefixer()]
+    }
   }
 })

@@ -1,11 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '../utils/request'
 
 const reports = ref([])
 const loading = ref(false)
-const status = ref(0)
+const status = ref<any>(0)
 const page = ref(1)
 const pageSize = 20
 const total = ref(0)
